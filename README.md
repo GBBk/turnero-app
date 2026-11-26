@@ -4,7 +4,7 @@ App web full stack para que un pequeño negocio (peluquería, consultorio, estud
 Los clientes ven los horarios libres en tiempo real y reservan en segundos; el negocio administra servicios,
 horarios de atención y su agenda diaria.
 
-**Stack:** Next.js 15 (App Router, Server Actions) · TypeScript · PostgreSQL · Prisma · Tailwind CSS · Zod · Vitest · GitHub Actions · Vercel
+**Stack:** Next.js 15 (App Router, Server Actions) · TypeScript · PostgreSQL (Neon) · Prisma + node-postgres · Tailwind CSS · Zod · Vitest · GitHub Actions · Vercel
 
 | Reserva | Agenda del admin |
 |---|---|
@@ -70,7 +70,7 @@ npm test
 
 ## Despliegue
 
-Ver [docs/DEPLOY.md](docs/DEPLOY.md) (Vercel + Neon, ambos con plan gratuito).
+Ver [docs/DEPLOY.md](docs/DEPLOY.md): Vercel + Neon, ambos con plan gratuito. La base vive en Neon, con conexión pooled para la app y directa para las migraciones.
 
 ## Estructura
 
