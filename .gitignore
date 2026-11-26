@@ -41,3 +41,7 @@ yarn-error.log*
 next-env.d.ts
 !.env.example
 .neon
+
+# Skills de agentes: se instalan con `npx skills install` a partir de skills-lock.json
+.agents/
+.claude/skills/
