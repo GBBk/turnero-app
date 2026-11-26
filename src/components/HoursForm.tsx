@@ -11,23 +11,25 @@ type Row = { weekday: number; open: boolean; from: string; to: string };
 export function HoursForm({ rows }: { rows: Row[] }) {
   const [state, action] = useActionState<AdminState, FormData>(saveBusinessHours, undefined);
   return (
-    <form action={action} className="space-y-4">
-      <div className="divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
+    <form action={action} className="max-w-xl space-y-6">
+      <ul className="divide-y divide-rule border-y border-rule">
         {rows.map((r) => (
-          <div key={r.weekday} className="grid grid-cols-[1fr_auto] items-center gap-3 p-3 sm:grid-cols-[10rem_auto_8rem_8rem]">
-            <span className="font-medium">{WEEKDAYS[r.weekday]}</span>
+          <li key={r.weekday} className="group grid grid-cols-[1fr_auto] items-center gap-3 py-3 sm:grid-cols-[9rem_6rem_1fr]">
+            <span className="font-semibold">{WEEKDAYS[r.weekday]}</span>
             <label className="flex items-center gap-2 font-normal">
-              <input type="checkbox" name={`open-${r.weekday}`} defaultChecked={r.open} /> Abierto
+              <input type="checkbox" className="open-toggle" name={`open-${r.weekday}`} defaultChecked={r.open} /> Abierto
             </label>
-            <input type="time" name={`from-${r.weekday}`} defaultValue={r.from} aria-label={`Apertura ${WEEKDAYS[r.weekday]}`} />
-            <input type="time" name={`to-${r.weekday}`} defaultValue={r.to} aria-label={`Cierre ${WEEKDAYS[r.weekday]}`} />
-          </div>
+            {/* Si el día está cerrado, las horas se atenúan: no se guardan. */}
+            <div className="col-span-2 flex items-center gap-2 sm:col-span-1 group-has-[.open-toggle:not(:checked)]:opacity-40">
+              <input type="time" name={`from-${r.weekday}`} defaultValue={r.from} aria-label={`Apertura del ${WEEKDAYS[r.weekday]}`} />
+              <span className="text-slate">a</span>
+              <input type="time" name={`to-${r.weekday}`} defaultValue={r.to} aria-label={`Cierre del ${WEEKDAYS[r.weekday]}`} />
+            </div>
+          </li>
         ))}
-      </div>
-      <div className="flex items-center gap-3">
-        <SubmitButton>Guardar horarios</SubmitButton>
-        <FormMessage state={state} />
-      </div>
+      </ul>
+      <FormMessage state={state} />
+      <SubmitButton pendingText="Guardando…">Guardar horario</SubmitButton>
     </form>
   );
 }

@@ -20,7 +20,7 @@ export async function createService(_prev: AdminState, formData: FormData): Prom
   });
   revalidatePath("/admin/servicios");
   revalidatePath("/");
-  return { ok: "Servicio creado" };
+  return { ok: "Servicio agregado" };
 }
 
 export async function toggleService(formData: FormData) {
@@ -61,5 +61,5 @@ export async function saveBusinessHours(_prev: AdminState, formData: FormData): 
   ]);
   revalidatePath("/admin/horarios");
   revalidatePath("/reservar");
-  return { ok: "Horarios guardados" };
+  return { ok: "Horario guardado" };
 }

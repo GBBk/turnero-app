@@ -1,12 +1,69 @@
 @import "tailwindcss";
 
-input,
-select {
-  @apply w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100;
+/*
+  Sistema visual de Turnero (ver docs/DISENO.md)
+  Paleta tomada del poste de barbería: azul tinta, rojo de poste y blanco,
+  sobre un gris azulado frío. El rojo se reserva para la acción principal
+  y la selección; todo lo demás es tinta y gris.
+*/
+@theme {
+  --color-ground: #eef2f4;   /* fondo de página */
+  --color-paper: #ffffff;    /* superficies */
+  --color-ink: #14213d;      /* texto y estructura */
+  --color-slate: #5b7083;    /* texto secundario */
+  --color-rule: #c9d3da;     /* líneas y bordes */
+  --color-pole: #c8102e;     /* acción principal y selección */
+  --color-pole-dark: #a00d25;
+  --color-ok: #2f7d5b;
+
+  --font-display: var(--font-big-shoulders), "Arial Narrow", sans-serif;
+  --font-sans: var(--font-public-sans), system-ui, sans-serif;
 }
-input[type="checkbox"] {
-  @apply h-4 w-4 w-auto;
+
+/* En @layer base para que las utilidades de Tailwind puedan pisar estos estilos. */
+@layer base {
+  html {
+    background: var(--color-ground);
+    color: var(--color-ink);
+  }
+
+  body {
+    font-family: var(--font-sans);
+    font-feature-settings: "tnum" 1; /* números tabulares: horarios alineados */
+  }
+
+  :focus-visible {
+    outline: 3px solid var(--color-pole);
+    outline-offset: 2px;
+  }
+
+  input:not([type="checkbox"]):not([type="radio"]),
+  select {
+    @apply w-full rounded-md border border-rule bg-paper px-3 py-2.5 text-base text-ink;
+  }
+  input:not([type="checkbox"]):not([type="radio"]):focus {
+    @apply border-ink;
+  }
+  input[type="checkbox"] {
+    @apply h-4 w-4 accent-pole;
+  }
+  label {
+    @apply text-sm font-semibold text-ink;
+  }
 }
-label {
-  @apply text-sm font-medium text-slate-700;
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Único momento de movimiento: la hora del próximo turno libre aparece al cargar. */
+@keyframes arrive {
+  from { opacity: 0; transform: translateY(0.15em); }
+  to { opacity: 1; transform: none; }
+}
+.arrive {
+  animation: arrive 500ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
 }
