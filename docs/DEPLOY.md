@@ -1,49 +1,58 @@
 # Despliegue en Vercel + Neon
 
 Vercel aloja la app de Next.js y Neon aloja PostgreSQL. Ambos tienen plan gratuito.
-(Supabase también sirve: solo cambia de dónde sacás la cadena de conexión.)
 
-## 1. Crear la base de datos en Neon
+## 1. Base de datos en Neon
 
-1. Creá un proyecto en https://neon.tech (región cercana a la de Vercel, por ejemplo `us-east-1`).
-2. Copiá la **connection string** (formato `postgresql://usuario:clave@host/neondb?sslmode=require`).
-
-## 2. Subir el repositorio a GitHub
+El proyecto de Neon ya está vinculado al repo con la CLI de Neon (`neon.ts` declara los servicios;
+`.neon`, que no se commitea, guarda el proyecto y la rama):
 
 ```bash
-git remote add origin git@github.com:<tu-usuario>/turnero.git
-git push -u origin main
+npm i -g neon@latest
+neon login
+neon init -y --org-id <org> --project-id <proyecto> --branch production --services postgres
+neon deploy        # aplica neon.ts y baja DATABASE_URL y DATABASE_URL_UNPOOLED a .env
 ```
 
-## 3. Importar el proyecto en Vercel
+Neon entrega dos cadenas de conexión para la misma base:
+
+| Variable                | Host               | La usa                                   |
+|-------------------------|--------------------|------------------------------------------|
+| `DATABASE_URL`          | con `-pooler`      | la app (PgBouncer, ideal para serverless) |
+| `DATABASE_URL_UNPOOLED` | sin `-pooler`      | `prisma migrate` (necesita sesión propia) |
+
+## 2. Importar el proyecto en Vercel
 
 1. En https://vercel.com/new importá el repositorio. Vercel detecta Next.js solo.
-2. En **Environment Variables** cargá:
+2. En **Environment Variables** cargá (las dos primeras salen de `.env` después de `neon deploy`,
+   o del botón **Connect** en la consola de Neon):
 
-| Variable            | Valor                                           |
-|---------------------|-------------------------------------------------|
-| `DATABASE_URL`      | la connection string de Neon                    |
-| `AUTH_SECRET`       | resultado de `openssl rand -base64 32`          |
-| `BUSINESS_TIMEZONE` | `America/Argentina/Buenos_Aires` (o la tuya)    |
+| Variable                | Valor                                          |
+|-------------------------|------------------------------------------------|
+| `DATABASE_URL`          | conexión pooled de Neon                        |
+| `DATABASE_URL_UNPOOLED` | conexión directa de Neon                       |
+| `AUTH_SECRET`           | resultado de `openssl rand -base64 32`         |
+| `BUSINESS_TIMEZONE`     | `America/Argentina/Buenos_Aires` (o la tuya)   |
 
 3. Deploy.
 
-El script `build` corre `prisma generate && prisma migrate deploy && next build`, así que **las migraciones se aplican
-solas en cada deploy**, incluida la exclusion constraint.
+El script `build` corre `prisma generate && prisma migrate deploy && next build`, así que **las migraciones
+pendientes se aplican solas en cada deploy** usando la conexión directa.
 
-## 4. Cargar datos de ejemplo (opcional)
-
-Desde tu máquina, apuntando a la base de Neon:
+## 3. Datos de ejemplo
 
 ```bash
-DATABASE_URL="<connection string de Neon>" npm run db:seed
+npm run db:seed    # usa DATABASE_URL de .env
 ```
 
-Después de cargar el seed, **cambiá la contraseña del admin** o crealo con otra, porque la del seed es pública en el README.
+La contraseña del admin del seed es pública en el README: para una demo está bien, pero no la uses con datos reales.
 
 ## Notas
 
-- `migrate deploy` en el build es la opción más simple para un proyecto chico. En un equipo grande se suele
-  correr como paso separado del pipeline, para que un build fallido no deje migraciones a medias.
-- Si usás muchas instancias serverless, conviene la connection string **pooled** de Neon (host con `-pooler`)
-  para no agotar conexiones.
+- **Driver:** la app usa node-postgres (`pg`) a través del adapter de Prisma, con `attachDatabasePool` de
+  `@vercel/functions`. Es lo que Neon recomienda en Vercel con Fluid compute: el pool se reutiliza entre
+  requests y las conexiones ociosas se cierran antes de que la función se suspenda.
+- `migrate deploy` en el build es lo más simple para un proyecto chico. En un equipo grande se suele correr
+  como paso separado del pipeline.
+- Neon suspende la base tras 5 minutos sin uso (plan gratuito): la primera request después tarda unos cientos
+  de milisegundos más.
