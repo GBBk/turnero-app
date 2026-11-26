@@ -1,7 +1,15 @@
 export function FormMessage({ state }: { state?: { error?: string; ok?: string } }) {
   if (state?.error)
-    return <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{state.error}</p>;
+    return (
+      <p role="alert" className="border-l-4 border-pole bg-paper px-3 py-2 text-sm text-ink">
+        {state.error}
+      </p>
+    );
   if (state?.ok)
-    return <p role="status" className="rounded-lg bg-green-50 px-3 py-2 text-sm text-green-700">{state.ok}</p>;
+    return (
+      <p role="status" className="border-l-4 border-ok bg-paper px-3 py-2 text-sm text-ink">
+        {state.ok}
+      </p>
+    );
   return null;
 }

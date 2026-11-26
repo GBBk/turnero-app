@@ -91,3 +91,14 @@ export async function cancelAppointment(
   const res = await prisma.appointment.updateMany({ where, data: { status: "CANCELLED" } });
   return res.count === 1;
 }
+
+/** Primer horario libre de un servicio, buscando hasta `daysAhead` días. */
+export async function getNextAvailableSlot(serviceId: string, now = new Date(), daysAhead = 14) {
+  const today = todayIn(BUSINESS_TIMEZONE, now);
+  for (let i = 0; i <= daysAhead; i++) {
+    const date = addDaysToDateString(today, i);
+    const slots = await getAvailableSlots(serviceId, date, now);
+    if (slots.length > 0) return { date, start: slots[0] };
+  }
+  return null;
+}

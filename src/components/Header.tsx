@@ -2,28 +2,30 @@ import Link from "next/link";
 import { getSession } from "@/lib/auth";
 import { logout } from "@/app/actions/auth";
 
+const navLink = "rounded-md px-2 py-1 text-slate hover:text-ink";
+
 export async function Header() {
   const session = await getSession();
   return (
-    <header className="border-b border-slate-200 bg-white">
-      <nav className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-3 px-4 py-3">
-        <Link href="/" className="text-lg font-semibold text-indigo-700">Turnero</Link>
-        <div className="flex flex-wrap items-center gap-4 text-sm">
+    <header className="border-b border-rule bg-paper">
+      <nav className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-3 sm:px-6">
+        <Link href="/" className="font-display text-3xl font-extrabold leading-none tracking-tight text-ink">
+          Turnero
+        </Link>
+        <div className="flex flex-wrap items-center gap-x-2 text-sm font-medium">
           {session ? (
             <>
-              <Link href="/reservar" className="hover:text-indigo-700">Reservar</Link>
-              <Link href="/mis-turnos" className="hover:text-indigo-700">Mis turnos</Link>
-              {session.role === "ADMIN" && (
-                <Link href="/admin" className="hover:text-indigo-700">Admin</Link>
-              )}
+              <Link href="/reservar" className={navLink}>Reservar</Link>
+              <Link href="/mis-turnos" className={navLink}>Mis turnos</Link>
+              {session.role === "ADMIN" && <Link href="/admin" className={navLink}>Agenda</Link>}
               <form action={logout}>
-                <button className="text-slate-500 hover:text-slate-800">Salir ({session.name})</button>
+                <button className={navLink}>Salir</button>
               </form>
             </>
           ) : (
             <>
-              <Link href="/login" className="hover:text-indigo-700">Ingresar</Link>
-              <Link href="/registro" className="rounded-lg bg-indigo-600 px-3 py-1.5 text-white hover:bg-indigo-700">
+              <Link href="/login" className={navLink}>Ingresar</Link>
+              <Link href="/registro" className="ml-1 rounded-md bg-ink px-3 py-1.5 text-white hover:bg-ink/90">
                 Crear cuenta
               </Link>
             </>

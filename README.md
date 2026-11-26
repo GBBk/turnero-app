@@ -6,9 +6,13 @@ horarios de atención y su agenda diaria.
 
 **Stack:** Next.js 15 (App Router, Server Actions) · TypeScript · PostgreSQL (Neon) · Prisma + node-postgres · Tailwind CSS · Zod · Vitest · GitHub Actions · Vercel
 
+![Inicio con el próximo turno libre](docs/screenshots/inicio.png)
+
 | Reserva | Agenda del admin |
 |---|---|
 | ![Reserva](docs/screenshots/reservar.png) | ![Agenda](docs/screenshots/admin-agenda.png) |
+
+**Demo:** https://turnero-app-lake.vercel.app (cliente `cliente@turnos.dev` / `cliente1234`, admin `admin@turnos.dev` / `admin1234`)
 
 ## Funcionalidades
 
@@ -99,4 +103,4 @@ tests/
 - Reprogramar turnos y políticas de cancelación con anticipación mínima.
 - Rate limiting en login y tests end-to-end con Playwright.
 
-Las decisiones de diseño y sus alternativas están explicadas en [docs/DECISIONES.md](docs/DECISIONES.md).
+Las decisiones técnicas y sus alternativas están en [docs/DECISIONES.md](docs/DECISIONES.md), y las de diseño visual en [docs/DISENO.md](docs/DISENO.md).

@@ -19,8 +19,10 @@ export default async function HorariosPage() {
   });
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold">Horario de atención</h1>
-      <p className="text-sm text-slate-500">Los cambios no afectan los turnos ya reservados.</p>
+      <div>
+        <h1 className="font-display text-5xl font-extrabold">Horario de atención</h1>
+        <p className="mt-1 text-slate">Los cambios no afectan los turnos ya reservados.</p>
+      </div>
       <HoursForm rows={rows} />
     </div>
   );
